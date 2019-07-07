@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Taxi</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="search">Search</string>
+    <string name="order_taxi">Order taxi</string>
+    <string name="send">Send</string>
+    <string name="call">Call</string>
+</resources>
