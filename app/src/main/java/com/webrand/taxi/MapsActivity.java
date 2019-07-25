@@ -29,6 +29,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -51,7 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, Toolbar.OnMenuItemClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, Toolbar.OnMenuItemClickListener, GoogleMap.OnMarkerClickListener {
     private static final String TAG = "MapActivity";
 
 
@@ -224,7 +225,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted
-                    showScreenDialog();
+                    showScreenDialog(listOfCompanies);
                 } else {
                     // permission denied
                     utils.showToastMessage("Permission denied");
@@ -289,6 +290,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
             }
+            mMap.setOnMarkerClickListener(this);
     }
 
     private void drawMarkers(CompaniesModel company, Bitmap icon)  {
@@ -312,7 +314,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return true;
     }
 
-    private void showScreenDialog() {
+    private void showScreenDialog(List<CompaniesModel> listOfCompanies) {
         OrderTaxiDialog orderTaxiDialog = new OrderTaxiDialog(listOfCompanies);
         orderTaxiDialog.show(getSupportFragmentManager(),TAG);
     }
@@ -327,7 +329,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         CALL_PHONE_PERMISSION_REQUEST_CODE);
         } else {
             // Permission has already been granted
-            showScreenDialog();
+            showScreenDialog(listOfCompanies);
         }
 
     }
@@ -362,6 +364,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         btnOrderTaxi.setVisibility(View.GONE);
         cleanMap();
         super.onResume();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        for (CompaniesModel company:listOfCompanies
+             ) {
+            if (company.name.equals(marker.getTitle())){
+                List<CompaniesModel> list = new ArrayList<>();
+                list.add(company);
+                showScreenDialog(list);
+            }
+        }
+        return false;
     }
 }
 
